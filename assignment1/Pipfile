@@ -12,6 +12,9 @@ graphviz = "*"
 ipykernel = "*"
 jupyter = "*"
 pexpect = "*"
+matplotlib = "*"
+sklearn-evaluation = "*"
+mlxtend = "*"
 
 [dev-packages]
 
