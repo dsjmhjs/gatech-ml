@@ -46,7 +46,7 @@ Using a model with pruning threshold of 350, I created a f1 score report.
 It is pretty good for determining "<=50K" class but not so good at ">50K". Let's look at the what the next algorithm can do.
 
 ### **Neural Networks**
-For this algorithm, I used `MLPClassifier()`, and specifically, I used logistic regression in combination of stochastic gradient descent for activation because according to the lecture, calculus is better :). I also incorporated cross-validation and hyperparameter tuning to try to get the best result from this algorithm. For this, I used `GridSearchCV()` provided by scikit-learn. The result is this:
+For this algorithm, I used `MLPClassifier()`, and specifically, I used logistic regression in combination of stochastic gradient descent for activation because according to the lecture, calculus is better :). I also incorporated k-fold cross-validation and hyperparameter tuning to try to get the best result from this algorithm. For this, I used `GridSearchCV()` provided by scikit-learn. The result is this:
 
 <img src="NN1.png" width="400px" ><img src="NN2.png" width="400px">
 
@@ -57,3 +57,50 @@ As you can see that the accuracy is around 76.3% and could not get any higher as
 Even though the precision for ">50K" is at 1, the recall is at 0, causing f1 score to be very low. Comparatively, the model I was able to produce from neural networks is not as good as the decision tree model above. 
 
 ### **Boosting**
+Here I am using `GradientBoostingClassifier()` which uses gradient tree boosting, a generalization of boosting to arbitrary differentiable loss functions. There are a number of parameters that I can tune for this classifier, and I am going to focus on the number of estimators, the learning rate, and maximum depth of the gradient decision tree. The graph below shows a fixed learning rate with a variation of numbers of estimators. 
+
+![](boosting2.png)
+
+As you can see that the cross validation mean accuracies reaches a peak at 500 estimators. Let's see anothe graph oh maximum depth with fixed learning rate to see if it makes much difference in accuracy.
+
+![](boosting3.png)
+
+This shows that the cross-validation accuracy is the highest when the max depth is at 6. Now, let's do a grid search on variations of numbers of estimators and learning rate, setting max depth as 6. 
+
+![](boosting1.png)
+
+From the graph, as you can see that the best accuracy I could get is using learning rate of 0.1, number of estimators of 900, with a max depth of 6. Here is a f1 score report of the best model for boosting. 
+
+TODO: f1 report
+
+### **KNN**
+Again, I am using scikit-learn's KNN algorithm `KNeighborsClassifier()`. For this method, I am tuning number of neighbors, the weights on the neighbors, and a p value which is power parameter for the Minkowski metric. When p is 1, this is equivalent to using manhattan distance, and euclidean_distance for p is 2. For arbitrary p, minkowski distance is used. The first graph I am showing below is using uniform weights for the nearest neighbors. 
+
+![](KNN1.png)
+
+As you can see that the cross validation accuracy is higher then the number of neighbors increases. It also shows that manhattan distance creates better accuracies overall for my dataset. The next graph, I am using the "distance" weights which means the closer neighbors will have higher weights. 
+
+![](KNN2.png)
+
+Again, it has similar trends as the last graph's where the accuracy increases as the number of neighbors increases. Also, manhattan distance has beeter accuray. Now, let's have a constant p value and uniform weight. 
+
+![](KNN3.png)
+
+From the graph, it shows that the accuracy will peek at 25 neighbors. From this, I ran a f1 score report to see.
+
+![](5.png)
+
+### **Support Vector Machine**
+Using scikit-learn's SVM classifier, it is pretty slow to train a model running on my machine, which takes on average 70 seconds. Once I added k-fold cross validation, it doesn't finish at all. In their documentation, it says that "the fit time complexity is more than quadratic with the number of samples which makes it hard to scale to dataset with more than a couple of 10000 samples." This dataset has more than 48000 training samples, as a result, I couldn't do much k-fold cross validation and parameters tunning because of the runtime. After creating a SVM model, the f1 score report is the following:
+
+TODO: f1 score report
+
+### **Conclusion**
+Now I am going to compare the precision, recall as well as f1 scores of the best models from each algorithm because they will provide me useful information in selecting classification algorithm for this dataset. Keep in mind that the training set label distribution is imbalanced so that f1 score is a better metric than just simply accuracy of the cross-validation.
+
+TODO: comparison charts and explanation
+
+### **Things to Improve** 
+There are a number of things I could improve on my analysis. For example, I did not do any feature selection when running these algorithms, and doing so might drastically improve the accuracy as some features might not be significant when training. Also, I could have tried up-sampling or down-sampling to make the label distribution more balanced to create a better training set for creating models. I am doing this for the next dataset though as you will see why. 
+
+## Dataset Two
